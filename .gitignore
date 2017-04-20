@@ -57,3 +57,5 @@ local.properties
 /Picture.class
 /DynamicProgramming.class
 /ImageProcessor.class
+/Point.class
+/ParentPoint.class

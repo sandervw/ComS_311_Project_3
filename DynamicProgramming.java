@@ -32,7 +32,7 @@ public class DynamicProgramming {
 		
 		//This loop creates a matrix of costs
 		//it takes O(mn) time
-		for(int i=numRow-1; i>=0; i++){ //for each row, starting from the top
+		for(int i=numRow-1; i>=0; i--){ //for each row, starting from the top
 			if(i==numRow-1){ //if it is the last row of the matrix, do direct copy of data
 				for(int j=0; j<numCol; j++){ //for each column
 					costMatrix[i][j] = new ParentPoint(i, j, M[i][j]);
@@ -98,16 +98,68 @@ public class DynamicProgramming {
 	 * @param y a string of length m
 	 * @return returns a string z (obtained by inserting $ at n - m indices in y)
 	 */
-	public String stringAlignment(String x, String y){
-		
-		//TODO see text example of edit distance dynamic programming
+	public int stringAlignment(String x, String y){
+
+		/*
+		 * recursive algorithm:
+		 * int n = x.length
+		 * int m = y.length
+		 * alignCost(x, y, n, m){
+		 * 		if(m == 0) return (n-m)*4;
+		 * 		if(n == 0) return -(m-n) * 4
+		 * 		if(x[n-1] = y[m-1] return alignCost(x, y, n-1, m-1)); //letters match, so no cost
+		 * 		else{ //letters don't match, can do 1 of 2 operations
+		 * 			return minimum of:
+		 * 				(alignCost(x, y, n-1, m-1) + 2); //shift both indices back 1, essentially saying the letters will be compared
+		 * 					//and thus will not match and return a cost of +2
+		 * 				(alignCost(x, y, n-1, m) + 4); //shift only the bottom index back 1
+		 * 					//this will essentually put and extra $ on the string
+		 * 		}
+		 * }
+		 */
 		
 		String result = "";
-		return result;
+		
+		int n = x.length();
+		int m = y.length();
+		
+		//matrix to store costs of alignment
+		int costMatrix[][] = new int[n+1][m+1];
+		
+		//fill matrix in bottom-up manner
+		for(int i=0; i <= n; i++){ //for every row
+			for (int j=0; j <= m; j++){ //for every column
+				
+				//the end of the x string has been reached, so need to undo m-n $ cost
+				if(i == 0) costMatrix[i][j] = 0;
+				
+				//the end of the y string has been reached, so need to insert n-m $ symbols
+				else if(j == 0) costMatrix[i][j] = ((i-j) * 4);
+				
+				//characters are the same, so cost does not increase
+				else if (x.charAt(i-1) == y.charAt(j-1)) costMatrix[i][j] = costMatrix[i-1][j-1];
+				
+				//otherwise, the cost is the minimum of equating both symbols or inserting a $
+				else{
+					//costs less to equate the two than to insert a $ sign
+					if((costMatrix[i-1][j-1] + 2) <= costMatrix[i-1][j] + 4) costMatrix[i][j] = (costMatrix[i-1][j-1] + 2);
+					//costs less to insert a $ than to equate the two
+					else costMatrix[i][j] = (costMatrix[i-1][j] + 4);
+				}
+				
+			}
+		}
+		
+		return costMatrix[n][m];
 	}
 
 }
 
+/*
+ * This is a class to store the cost of a point, along with the point where that cost came from
+ * IE. if the point is at (i, j), and (i+1, j-1) has the lowest cost of its 3, the x and y values of
+ *   this object will be i+1 and j-1 respectively
+ */
 class ParentPoint{
 	
 	private int x;
@@ -127,7 +179,6 @@ class ParentPoint{
 	public int getY(){
 		return y;
 	}
-	
 	
 	public int getCost(){
 		return cost;

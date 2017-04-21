@@ -41,17 +41,17 @@ public class DynamicProgramming {
 			else{ //not the last row, so need to find min of 3 rows
 				for(int j=0; j<numCol; j++){ //for each column
 					if(j == 0){ //first column, so only do 2
-						if(M[i+1][j] <= M[i+1][j+1]) costMatrix[i][j] = new ParentPoint(i+1, j, M[i+1][j]);
-						else costMatrix[i][j] = new ParentPoint(i+1, j+1, M[i+1][j+1]);
+						if(M[i+1][j] <= M[i+1][j+1]) costMatrix[i][j] = new ParentPoint(i+1, j, (costMatrix[i+1][j].getCost() + M[i][j]));
+						else costMatrix[i][j] = new ParentPoint(i+1, j+1, (costMatrix[i+1][j+1].getCost() + M[i][j]));
 					}
 					else if(j == numCol-1){ //last column, only do 2
-						if(M[i+1][j-1] <= M[i+1][j]) costMatrix[i][j] = new ParentPoint(i+1, j-1, M[i+1][j-1]);
-						else costMatrix[i][j] = new ParentPoint(i+1, j, M[i+1][j]);
+						if(M[i+1][j-1] <= M[i+1][j]) costMatrix[i][j] = new ParentPoint(i+1, j-1, (costMatrix[i+1][j-1].getCost() + M[i][j]));
+						else costMatrix[i][j] = new ParentPoint(i+1, j, (costMatrix[i+1][j].getCost() + M[i][j]));
 					}
 					else{ //check for min of all 3
-						if(M[i+1][j-1] <= M[i+1][j] && M[i+1][j-1] <= M[i+1][j+1]) costMatrix[i][j] = new ParentPoint(i+1, j-1, M[i+1][j-1]);
-						else if(M[i+1][j] <= M[i+1][j-1] && M[i+1][j] <= M[i+1][j+1]) costMatrix[i][j] = new ParentPoint(i+1, j, M[i+1][j]);
-						else costMatrix[i][j] = new ParentPoint(i+1, j+1, M[i+1][j+1]);
+						if(M[i+1][j-1] <= M[i+1][j] && M[i+1][j-1] <= M[i+1][j+1]) costMatrix[i][j] = new ParentPoint(i+1, j-1, (costMatrix[i+1][j-1].getCost() + M[i][j]));
+						else if(M[i+1][j] <= M[i+1][j-1] && M[i+1][j] <= M[i+1][j+1]) costMatrix[i][j] = new ParentPoint(i+1, j, (costMatrix[i+1][j].getCost() + M[i][j]));
+						else costMatrix[i][j] = new ParentPoint(i+1, j+1, (costMatrix[i+1][j+1].getCost() + M[i][j]));
 					}
 				}
 			}
@@ -61,6 +61,7 @@ public class DynamicProgramming {
 		//it takes O(m) time
 		int lowestCostCol = 0;
 		int lowestCost = Integer.MAX_VALUE;
+		
 		//for every column in the matrix (IE, run M times)
 		for(int i=0; i<numCol; i++){
 			if(costMatrix[0][i].getCost() < lowestCost){
@@ -77,10 +78,12 @@ public class DynamicProgramming {
 		results.add(0);
 		results.add(colIndex);
 		for(int i = 0; i < numRow-1; i++){
-			rowIndex = costMatrix[rowIndex][colIndex].getX();
-			colIndex = costMatrix[rowIndex][colIndex].getY();
-			results.add(rowIndex);
-			results.add(colIndex);
+			int rowIndexTemp = costMatrix[rowIndex][colIndex].getX();
+			int colIndexTemp = costMatrix[rowIndex][colIndex].getY();
+			results.add(rowIndexTemp);
+			results.add(colIndexTemp);
+			rowIndex = rowIndexTemp;
+			colIndex = colIndexTemp;
 		}
 		
 		//Total time for the algorithm is O(mn + m + n) or O(mn)
@@ -98,22 +101,23 @@ public class DynamicProgramming {
 	 * @param y a string of length m
 	 * @return returns a string z (obtained by inserting $ at n - m indices in y)
 	 */
-	public int stringAlignment(String x, String y){
+	public String stringAlignment(String x, String y){
 
 		/*
 		 * recursive algorithm:
+		 * input: string x and string y, want to minimize cost of making y into z by inserting $ symbols
 		 * int n = x.length
 		 * int m = y.length
 		 * alignCost(x, y, n, m){
-		 * 		if(m == 0) return (n-m)*4;
-		 * 		if(n == 0) return -(m-n) * 4
+		 * 		if(m == 0) return (n-m)*4; //cost is cost to insert n-m $ symbols
+		 * 		if(n == 0) return 0; //I don't know why this is 0, but it is. Don't question the algorithm gods
 		 * 		if(x[n-1] = y[m-1] return alignCost(x, y, n-1, m-1)); //letters match, so no cost
 		 * 		else{ //letters don't match, can do 1 of 2 operations
-		 * 			return minimum of:
+		 * 			return minimum of the following:
 		 * 				(alignCost(x, y, n-1, m-1) + 2); //shift both indices back 1, essentially saying the letters will be compared
 		 * 					//and thus will not match and return a cost of +2
 		 * 				(alignCost(x, y, n-1, m) + 4); //shift only the bottom index back 1
-		 * 					//this will essentually put and extra $ on the string
+		 * 					//this will essentially put and extra $ on the string
 		 * 		}
 		 * }
 		 */
@@ -150,7 +154,33 @@ public class DynamicProgramming {
 			}
 		}
 		
-		return costMatrix[n][m];
+		//used for debugging purposes to make sure cost is correct
+		//System.out.println(costMatrix[n][m]);
+		
+		//build the string (it will be backwards to start with)
+		int i = n;
+		int j = m;
+		while(i >0){
+			if(j>0){
+				if((costMatrix[i-1][j-1] + 2) <= (costMatrix[i-1][j] + 4)){
+					result = result + y.charAt(j-1);
+					i--;
+					j--;
+				}
+				else{
+					result = result + "$";
+					i--;
+				}
+			}
+			else{
+				result = result + "$";
+				i--;
+			}
+		}
+		
+		//reverse the string and return it
+		result = new StringBuilder(result).reverse().toString();
+		return result;
 	}
 
 }

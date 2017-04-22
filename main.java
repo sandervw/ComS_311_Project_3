@@ -31,13 +31,11 @@ public class main {
 		
 		//alignment test (works)
 		String s1 = "ABCEG";
-		String s2 = "";
+		String s2 = "C";
 		String temp;
 		temp = DynamicProgramming.stringAlignment(s1, s2);
 		System.out.println(temp);
 		
-		ImageProcessor p = new ImageProcessor("beforeTest.jpg");
-		p.reduceWidth(.7);
 	}
 
 }

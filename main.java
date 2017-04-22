@@ -4,8 +4,6 @@ public class main {
 
 	public static void main(String[] args) {
 		
-		DynamicProgramming d = new DynamicProgramming();
-		
 		//VC test
 		int[][] testMatrix = new int[4][4];
 		testMatrix[0][0] = 2;
@@ -28,15 +26,18 @@ public class main {
 		testMatrix[3][2] = 2;
 		testMatrix[3][3] = 1;
 		
-		ArrayList<Integer> tempResult = d.minCostVC(testMatrix);
+		ArrayList<Integer> tempResult = DynamicProgramming.minCostVC(testMatrix);
 		System.out.println(tempResult.toString());
 		
 		//alignment test (works)
 		String s1 = "ABCEG";
 		String s2 = "";
 		String temp;
-		temp = d.stringAlignment(s1, s2);
+		temp = DynamicProgramming.stringAlignment(s1, s2);
 		System.out.println(temp);
+		
+		ImageProcessor p = new ImageProcessor("beforeTest.jpg");
+		p.reduceWidth(.5);
 	}
 
 }

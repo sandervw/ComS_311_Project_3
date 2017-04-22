@@ -22,7 +22,7 @@ public class DynamicProgramming {
 	 * @param M the array of integers for which the min cost cut is being computed
 	 * @return returns an arraylist containing the sequence of 2n indices of the cut
 	 */
-	public ArrayList<Integer> minCostVC(int[][] M){
+	public static ArrayList<Integer> minCostVC(int[][] M){
 		
 		int numCol = M[0].length;
 		int numRow = M.length;
@@ -101,7 +101,7 @@ public class DynamicProgramming {
 	 * @param y a string of length m
 	 * @return returns a string z (obtained by inserting $ at n - m indices in y)
 	 */
-	public String stringAlignment(String x, String y){
+	public static String stringAlignment(String x, String y){
 
 		/*
 		 * recursive algorithm:

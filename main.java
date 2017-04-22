@@ -37,7 +37,7 @@ public class main {
 		System.out.println(temp);
 		
 		ImageProcessor p = new ImageProcessor("beforeTest.jpg");
-		p.reduceWidth(.5);
+		p.reduceWidth(.7);
 	}
 
 }

@@ -48,44 +48,44 @@ public class ImageProcessor {
 		ArrayList<Integer> cutValues;
 		for(int k=0; k<difference; k++){
 			
-			this.importance = new int[picture.height()][picture.width()];
+			this.importance = new int[result.height()][result.width()];
 			int yImportance;
 			int xImportance;
 			Color p1;
 			Color p2;
 			
-			for(int i=0; i<picture.height(); i++){
-				for(int j=0; j<picture.width(); j++){
+			for(int i=0; i<result.height(); i++){
+				for(int j=0; j<result.width(); j++){
 					
 					if(i == 0){
-						p1 = picture.get(j, picture.height()-1);
-						p2 = picture.get(j, i+1);
+						p1 = result.get(j, result.height()-1);
+						p2 = result.get(j, i+1);
 						yImportance = this.dist(p1.getRed(), p2.getRed(), p1.getBlue(), p2.getBlue(), p1.getGreen(), p2.getGreen());
 					}
-					else if(i == picture.height()-1){
-						p1 = picture.get(j, i-1);
-						p2 = picture.get(j, 0);
+					else if(i == result.height()-1){
+						p1 = result.get(j, i-1);
+						p2 = result.get(j, 0);
 						yImportance = this.dist(p1.getRed(), p2.getRed(), p1.getBlue(), p2.getBlue(), p1.getGreen(), p2.getGreen());
 					}
 					else{
-						p1 = picture.get(j, i-1);
-						p2 = picture.get(j, i+1);
+						p1 = result.get(j, i-1);
+						p2 = result.get(j, i+1);
 						yImportance = this.dist(p1.getRed(), p2.getRed(), p1.getBlue(), p2.getBlue(), p1.getGreen(), p2.getGreen());
 					}
 					
 					if(j == 0){
-						p1 = picture.get(picture.width()-1, i);
-						p2 = picture.get(j+1, i);
+						p1 = result.get(result.width()-1, i);
+						p2 = result.get(j+1, i);
 						xImportance = this.dist(p1.getRed(), p2.getRed(), p1.getBlue(), p2.getBlue(), p1.getGreen(), p2.getGreen());
 					}
-					else if(j == picture.width()-1){
-						p1 = picture.get(0, i);
-						p2 = picture.get(j-1, i);
+					else if(j == result.width()-1){
+						p1 = result.get(0, i);
+						p2 = result.get(j-1, i);
 						xImportance = this.dist(p1.getRed(), p2.getRed(), p1.getBlue(), p2.getBlue(), p1.getGreen(), p2.getGreen());
 					}
 					else{
-						p1 = picture.get(j-1, i);
-						p2 = picture.get(j+1, i);
+						p1 = result.get(j-1, i);
+						p2 = result.get(j+1, i);
 						xImportance = this.dist(p1.getRed(), p2.getRed(), p1.getBlue(), p2.getBlue(), p1.getGreen(), p2.getGreen());
 					}
 					
@@ -96,8 +96,8 @@ public class ImageProcessor {
 			
 			cutValues = DynamicProgramming.minCostVC(importance);
 			//create the new picture
-			Picture tempResult = new Picture(result.width()-1, result.height()-1);
-			for(int i=0; i<result.height()-1; i++){
+			Picture tempResult = new Picture(result.width()-1, result.height());
+			for(int i=0; i<result.height(); i++){
 				for(int j=0; j<result.width()-1; j++){
 					if(j < cutValues.get(i*2+1)){
 						tempResult.set(j, i, result.get(j, i));
